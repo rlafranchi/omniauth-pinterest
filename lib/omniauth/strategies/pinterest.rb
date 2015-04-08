@@ -15,6 +15,20 @@ module OmniAuth
         super
       end
 
+      def authorize_params
+        super.tap do |params|
+          %w[scope client_options client_id].each do |v|
+            if request.params[v]
+              if v == client_id
+                params[:consumer_id] = request.params[v]
+              else
+                params[v.to_sym] = request.params[v]
+              end
+            end
+          end
+        end
+      end
+
       uid { raw_info['id'] }
 
       info do
